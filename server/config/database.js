@@ -1,12 +1,15 @@
 var mongoose = require('mongoose');
+require('dotenv').config(); 
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost/Studious';
+var dbURI = '';
 if (process.env.NODE_ENV === 'production') {
   dbURI = process.env.MONGOLAB_URI;
 }
+else{
+  dbURI = process.env.MONGOLAB_URI_DEV;
+}
 
 mongoose.connect(dbURI);
-
 
 // CONNECTION EVENTS
 mongoose.connection.on('connected', function() {
