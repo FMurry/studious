@@ -161,3 +161,49 @@ server/.node_repl_history
 # Yarn Integrity file
 web/.yarn-integrity
 server/.yarn-integrity
+
+#Ruby on rails
+*.rbc
+web/capybara-*.html
+web/.rspec
+web/log
+web/tmp
+web/db/*.sqlite3
+web/db/*.sqlite3-journal
+web/public/system
+web/coverage/
+web/spec/tmp
+**.orig
+web/rerun.txt
+web/pickle-email-*.html
+
+# TODO Comment out this rule if you are OK with secrets being uploaded to the repo
+web/config/initializers/secret_token.rb
+
+# Only include if you have production secrets in this file, which is no longer a Rails default
+# config/secrets.yml
+
+# dotenv
+# TODO Comment out this rule if environment variables can be committed
+web/.env
+
+## Environment normalization:
+web/.bundle
+web/vendor/bundle
+
+# these should all be checked in to normalize the environment:
+# Gemfile.lock, .ruby-version, .ruby-gemset
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+web/.rvmrc
+
+# if using bower-rails ignore default bower_components path bower.json files
+web/vendor/assets/bower_components
+*.bowerrc
+web/bower.json
+
+# Ignore pow environment settings
+web/.powenv
+
+# Ignore Byebug command history file.
+web/.byebug_history
