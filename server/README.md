@@ -15,6 +15,11 @@ multiple applications like web, iOS, and Android</p>
 <li><a href="https://robomongo.org/">Robomongo</a> - Robomongo is a mongodb database management tool that allows us to see the database through GUI</li>
 <br>Ready to install:
 <li>Go to the main directory of the app and run npm install in terminal</li>
+<li>In the server directory create a file named .env</li>
+```
+MONGOLAB_URI_DEV=mongodb://localhost/Studious
+NODE_ENV=
+MONGOLAB_URI_PROD= ```
 <li>Start your mongodb by running mongod in terminal</li>
 <li>To start the server you can run npm start</li>
 </p>
