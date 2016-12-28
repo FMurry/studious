@@ -31,5 +31,10 @@ multiple applications like web, iOS, and Android</p>
 <br>Ready to install:
 <li>Go to the main directory of the app and run npm install in terminal</li>
 <li>Start your mongodb by running mongod in terminal</li>
+```javacript
+MONGOLAB_URI_DEV=mongodb://localhost/Studious
+NODE_ENV=
+MONGOLAB_URI_PROD= 
+```
 <li>To start the server you can run npm start</li>
 </p>
