@@ -14,3 +14,9 @@
 <ul><li>Install <a href="https://nodejs.org/en/">Node</a></li>
 <li>Within the web directory, in terminal, type "npm install"</li>
 <li>To start web app type in "npm start" in terminal</li></ul>
+<h3>Server</h3>
+<ul>
+	<li>Server is needed in order to talk to the application</li>
+	<li>Within the server directory, in terminal, type "npm install"</li>
+	<li>To start server type npm start</li>
+</ul>

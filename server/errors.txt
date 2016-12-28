@@ -1,0 +1,15 @@
+Error Codes:
+
+This codes are the json codes returned from authentication
+
+Signup/Register
+401 - Email already used so new user can't be created
+
+
+Login/authentication
+501 - User attempted to login but no account exists with that email
+502 - Incorrect password
+
+
+200 - Everything is OK!
+

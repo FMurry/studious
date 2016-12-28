@@ -1,0 +1,35 @@
+{
+  "name": "studious",
+  "version": "0.0.1",
+  "description": "Restful API for college app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FMurry/studious-server.git"
+  },
+  "author": "Frederic Murry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FMurry/studious-server/issues"
+  },
+  "homepage": "https://github.com/FMurry/studious-server#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.2.1",
+    "jwt-simple": "^0.5.1",
+    "mongoose": "^4.7.4",
+    "morgan": "^1.7.0",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-jwt": "^2.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
