@@ -1,12 +1,13 @@
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var User = require('../app/models/user');
-var config = require('./database');
+require('dotenv').config(); 
+
 
 module.exports = function(passport){
 	var opts = {};
 	opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
-	opts.secretOrKey = config.secret;
+	opts.secretOrKey = process.env.SECRET;
 	passport.use(new JwtStrategy(opts, function(jwt_payload, done){
 		User.findOne({id: jwt_payload.id}, function(err, user){
 			//Hit error

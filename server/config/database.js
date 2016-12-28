@@ -43,7 +43,7 @@ process.on('SIGINT', function() {
   });
 });
 
-module.exports = {
-  'secret': 'Fmsoft_1108930',
-  'database': dbURI
-};
+// module.exports = {
+//   'secret': '',
+//   'database': dbURI
+// };

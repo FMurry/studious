@@ -6,11 +6,10 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('passport');
-var config = require('./config/database');
 var User = require('./app/models/user');
 var port = process.env.PORT || 3000;
 var jwt = require('jwt-simple');
-
+require('dotenv').config(); 
 
 // get our request parameters
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -72,7 +71,7 @@ apiRoutes.post('/login', function(req, res){
 			user.verifyPassword(req.body.password, function(err, isMatch){
 				if(isMatch && !err){
 					//password matched create token for user
-					var token = jwt.encode(user,config.secret);
+					var token = jwt.encode(user,process.env.SECRET);
 					//var token = user.generateToken();
 					console.log(token);
 
@@ -89,7 +88,7 @@ apiRoutes.post('/login', function(req, res){
 apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), function(req, res){
 	var token = getToken(req.headers);
 	if(token){
-		var decodedToken = jwt.decode(token, config.secret);
+		var decodedToken = jwt.decode(token, process.env.SECRET);
 		User.findOne({
 			email: decodedToken.email
 		}, function(err, user){
