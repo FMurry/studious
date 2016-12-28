@@ -38,3 +38,5 @@ MONGOLAB_URI_PROD=
 ```
 <li>To start the server you can run npm start</li>
 </p>
+
+# Studious
