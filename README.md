@@ -33,9 +33,13 @@ multiple applications like web, iOS, and Android
 First there are a couple of things that are required to run this application
 We need:
 [Nodejs](https://nodejs.org/en/) and Npm to be installed (npm is included with nodejs)
+
 [MongoDB](https://www.mongodb.com/download-center?jmp=nav) will be our database
+
 Optional Tools:
+
 [Postman](https://www.getpostman.com/) - Postman allows us to easily send requests to the server and test the api
+
 [Robomongo](https://robomongo.org/) - Robomongo is a mongodb database management tool that allows us to see the database through GUI
 
 Ready to install:
