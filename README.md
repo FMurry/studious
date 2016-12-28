@@ -40,3 +40,4 @@ MONGOLAB_URI_PROD=
 </p>
 
 # Studious
+Studious is a course management application were students can take control of their classes manage assignments
