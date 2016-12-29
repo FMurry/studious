@@ -48,10 +48,14 @@ Go to the main directory of the app and run
 npm install
 ```
 Start your mongodb by running mongod in terminal
+
+Example .env file (Inside server folder)
+
 ```javascript
 MONGOLAB_URI_DEV=mongodb://localhost/Studious
-NODE_ENV=
-MONGOLAB_URI_PROD= 
+NODE_ENV=DEV
+MONGOLAB_URI_PROD=
+SECRET=
 ```
 To start the server you can run
 ```javascript
