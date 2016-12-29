@@ -74,12 +74,7 @@ apiRoutes.post('/register', function(req, res){
 				}
 				else{
 					console.log(err);
-					if(err.message === 'User validation failed'){
-						return res.json({ success: false, code: 401,msg: "Not A valid Email"})
-					}
-					else{
-						return res.json({ success: false, code: 401,msg: err})
-					}
+					return res.json({ success: false, code: 401,msg: "Internal Server Error"})
 				}
 			}
 			res.json({success: true, code:200, msg: 'New user created successfully'});
