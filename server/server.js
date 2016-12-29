@@ -50,20 +50,26 @@ apiRoutes.post('/register', function(req, res){
 		newUser.save(function(err) {
 			if(err){
 				//console.log(err);
+				//Mongodb unique error, user already exists
 				if(err.code == 11000){
 					return res.json({ success: false, code: 401,msg: "User already exists"})
 				}
 
+				//Hit the validation error
 				else if(err.name='ValidatorError') {
+					//Validation issue with email
 					if(err.errors.email){
 						return res.json({ success: false, code: 402,msg: err.errors.email.message})
 					}
+					//Validation issue with name
 					else if(err.errors.name){
 						return res.json({ success: false, code: 403,msg: err.errors.name.message})
 					}
+					//Validation Issue with password
 					else if(err.errors.password){
 						return res.json({ success: false, code: 404,msg: err.errors.password.message})
 					}
+					//Unknown error
 					return res.json({ success: false, code: 450,msg: err})
 				}
 				else{
