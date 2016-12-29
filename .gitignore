@@ -44,6 +44,8 @@ android/.idea/libraries
 # External native build folder generated in Android Studio 2.2 and later
 android/.externalNativeBuild
 
+# Android Secret files
+android/app/src/main/java/xyz/fmsoft/studious/Secret/*
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
