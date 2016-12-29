@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 require('dotenv').config(); 
 var gracefulShutdown;
 var dbURI = '';
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'prod') {
   dbURI = process.env.MONGOLAB_URI;
 }
 else{

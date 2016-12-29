@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
+var Course = require('./course');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var config = require('../../config/database');
 
-
 //We will set up User Schema
+//Has many Courses
 var userSchema = new Schema({
 	name: {
 		type: String,
@@ -19,7 +20,8 @@ var userSchema = new Schema({
 	password: {
         type: String,
         required: true
-    }
+    },
+    courses: [Course.schema]
 });
 
 //Operation to be done before save

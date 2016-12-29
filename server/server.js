@@ -7,6 +7,7 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var User = require('./app/models/user');
+var Course = require('./app/models/course')
 var port = process.env.PORT || 3000;
 var jwt = require('jwt-simple');
 require('dotenv').config(); 
@@ -73,7 +74,7 @@ apiRoutes.post('/login', function(req, res){
 					//password matched create token for user
 					var token = jwt.encode(user,process.env.SECRET);
 					//var token = user.generateToken();
-					console.log(token);
+					//console.log(token);
 
 					res.json({success: true, code:200, token: 'JWT '+ token});
 				}
@@ -100,11 +101,29 @@ apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), funct
 				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
 			}
 			else{
+				// var courses = [];
+				// for(var course in user.courses){
+				// 	courses.push({CourseID: course.courseID,
+				// 		courseName: course.courseName,
+				// 		startTime: course.startTime,
+				// 		endTime: course.endTime,
+				// 		room: course.room,
+				// 		sunday: course.sunday,
+				// 		monday: course.monday,
+				// 		tuesday: course.tuesday,
+				// 		wednesday: course.wednesday,
+				// 		thursday: course.thursday,
+				// 		friday: course.friday,
+				// 		saturday: course.saturday,
+				// 		color: course.color});
+				// }
 				res.json({success: true, code: 200, msg:'accessing profile',
 					user: {
 						name:user.name,
-						email:user.email
-					}});
+						email:user.email,
+						courses: user.courses
+					}
+				});
 			}
 		});
 	}
@@ -128,6 +147,50 @@ getToken = function(headers) {
 	}
 }
 
+apiRoutes.post('/addCourse', passport.authenticate('jwt', { session: false}), function(req, res){
+	var token = getToken(req.headers);
+	if(token){
+		var decodedToken = jwt.decode(token, process.env.SECRET);
+		User.findOne({
+			email: decodedToken.email
+		}, function(err, user){
+			if(err){
+				throw err;
+			}
+
+			if(!user){
+				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
+			}
+			else{
+				var newCourse = new Course({
+					courseID: req.body.courseID,
+					courseName: req.body.courseName,
+					startTime: req.body.startTime,
+					endTime: req.body.endTime,
+					room: req.body.room,
+					sunday: req.body.sunday,
+					monday: req.body.monday,
+					tuesday: req.body.tuesday,
+					wednesday: req.body.wednesday,
+					thursday: req.body.thursday,
+					friday: req.body.friday,
+					saturday: req.body.saturday,
+					color: req.body.color
+				});
+				user.courses.push(newCourse);
+				user.save(function(err) {
+					if(err){
+						return res.json({ success: false, code: 401,msg: 'Course Not Saved'})
+					}
+					res.json({success: true, code:200, msg: 'New course created successfully'});
+				});
+			}
+		});
+	}
+	else{
+		return res.status(403).send({success: false, msg: 'No token provided.'});
+	}
+});
 app.use('/api', apiRoutes);
  
 // Start the server
