@@ -161,7 +161,7 @@ apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), funct
 			}
 
 			if(!user){
-				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
+				return res.status(403).send({success: false, code:501, token: '',msg: 'Authentication failed. User not found.'});
 			}
 			else{
 				// var courses = [];

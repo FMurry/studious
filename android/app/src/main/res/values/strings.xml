@@ -6,4 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="saved_jwt">JWT</string>
     <string name="sign_up">No Account Sign up Here!</string>
+    <string name="log_in">Already have an account? Log in here!!</string>
+
 </resources>

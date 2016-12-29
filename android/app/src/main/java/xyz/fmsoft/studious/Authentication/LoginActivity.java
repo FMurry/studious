@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.login_email)AppCompatEditText _email;
     @BindView(R.id.login_password)AppCompatEditText _password;
     @BindView(R.id.login_button)AppCompatButton _loginButton;
+    @BindView(R.id.login_signup)AppCompatTextView _signup;
 
     private static final String TAG = "LoginActivity";
     @Override
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getSupportActionBar().hide();
         }
         _loginButton.setOnClickListener(this);
+        _signup.setOnClickListener(this);
 
 
     }
@@ -89,6 +92,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         else{
                             progressDialog.dismiss();
+                            if(login.getCode() == 501){
+                                Toast.makeText(LoginActivity.this, "No User found, Please Sign up", Toast.LENGTH_SHORT).show();
+                            }
                             Log.d(TAG, login.getSuccess());
                         }
                     }
@@ -96,8 +102,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onFailure(Call<Login> call, Throwable t) {
                         Log.d(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
                     }
                 });
+                break;
+            case R.id.login_signup:
+                startActivity(new Intent(this, SignupActivity.class));
+                finish();
                 break;
 
         }
