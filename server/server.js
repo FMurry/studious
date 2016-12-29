@@ -133,7 +133,13 @@ apiRoutes.post('/login', function(req, res){
 					//var token = user.generateToken();
 					//console.log(token);
 
-					res.json({success: true, code:200, token: 'JWT '+ token});
+					res.json({success: true, code:200, 
+						user: {
+						_id:user._id,
+						name:user.name,
+						email:user.email
+					}
+					,token: 'JWT '+ token});
 				}
 				else{
 					res.send({success: false, code:502, msg: 'Authentication failed. Wrong password.'});
@@ -179,7 +185,8 @@ apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), funct
 						_id:user._id,
 						name:user.name,
 						email:user.email,
-						courses: user.courses
+						courses: user.courses,
+						verified: user.verified
 					}
 				});
 			}

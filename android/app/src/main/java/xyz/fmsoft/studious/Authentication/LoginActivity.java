@@ -12,8 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,9 +58,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog.setMessage("Please Wait.....");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
+                final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                        .readTimeout(15, TimeUnit.SECONDS)
+                        .connectTimeout(15, TimeUnit.SECONDS)
+                        .build();
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(Environment.apiUrl)
                         .addConverterFactory(GsonConverterFactory.create())
+                        .client(okHttpClient)
                         .build();
                 RetrofitInterface request = retrofit.create(RetrofitInterface.class);
                 Call<Login> call = request.login(_email.getText().toString(),_password.getText().toString());
