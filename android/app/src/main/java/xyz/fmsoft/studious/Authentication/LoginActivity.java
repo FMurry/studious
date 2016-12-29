@@ -65,9 +65,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(Call<Login> call, Response<Login> response) {
                         Login login = response.body();
-                        Log.d(TAG,"Success: "+login.getSuccess());
-                        Log.d(TAG,"Code: "+login.getCode());
-                        Log.d(TAG,"token: "+login.getToken());
                         if (login.getCode() == 200){
                             SharedPreferences sharedPreferences = getSharedPreferences("token", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -81,6 +78,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         else if(login.getCode() == 502){
                             progressDialog.dismiss();
                             Toast.makeText(LoginActivity.this, "Password Incorrect", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            progressDialog.dismiss();
+                            Log.d(TAG, login.getSuccess());
                         }
                     }
 

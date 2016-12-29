@@ -19,6 +19,12 @@ var courseSchema = new Schema({
 	room: {
 		type: String,
 	},
+	type: {
+		type: String,
+		required: true,
+		default: 'Lecture',
+		enum: ['Lecture', 'Seminar', 'Lab']
+	},
 	sunday: {
 		type: Boolean,
 		required: true,

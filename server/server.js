@@ -49,7 +49,32 @@ apiRoutes.post('/register', function(req, res){
 		//Saves the user to db save hashes the password because of pre function
 		newUser.save(function(err) {
 			if(err){
-				return res.json({ success: false, code: 401,msg: 'Email already used'})
+				//console.log(err);
+				if(err.code == 11000){
+					return res.json({ success: false, code: 401,msg: "User already exists"})
+				}
+
+				else if(err.name='ValidatorError') {
+					if(err.errors.email){
+						return res.json({ success: false, code: 402,msg: err.errors.email.message})
+					}
+					else if(err.errors.name){
+						return res.json({ success: false, code: 403,msg: err.errors.name.message})
+					}
+					else if(err.errors.password){
+						return res.json({ success: false, code: 404,msg: err.errors.password.message})
+					}
+					return res.json({ success: false, code: 450,msg: err})
+				}
+				else{
+					console.log(err);
+					if(err.message === 'User validation failed'){
+						return res.json({ success: false, code: 401,msg: "Not A valid Email"})
+					}
+					else{
+						return res.json({ success: false, code: 401,msg: err})
+					}
+				}
 			}
 			res.json({success: true, code:200, msg: 'New user created successfully'});
 		});

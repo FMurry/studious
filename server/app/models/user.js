@@ -8,19 +8,39 @@ var config = require('../../config/database');
 
 //We will set up User Schema
 //Has many Courses
+
+var validateEmail = function(email) {
+    var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return regex.test(email)
+};
+
+var validateName = function(name) {
+	return (name.length >= 3 && name.length <= 48);
+};
+
+var validatePassword = function(password) {
+	return (password.length >= 8 && password.length <=24);
+}
+
 var userSchema = new Schema({
 	name: {
 		type: String,
-		required: true
+		required: [true, 'email required'],
+		validate: [validateName, "Please Enter name between 3 and 48 characters"]
 	},
 	email: {
 		type: String,
 		unique: true,
-		required: true
+		required: true,
+		trim: true,
+        lowercase: true,
+        validate: [validateEmail, 'Please fill a valid email address'],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
 	},
 	password: {
         type: String,
-        required: true
+        required: true,
+        validate: [validatePassword, 'Please Enter A Password between 8 and 24 characters']
     },
     verified: {
     	type: Boolean,
@@ -54,6 +74,7 @@ userSchema.pre('save', function(next){
 		return next();
 	}
 });
+
 
 userSchema.methods.verifyPassword = function(pass, cb) {
 	bcrypt.compare(pass, this.password, function(err, isMatch){
