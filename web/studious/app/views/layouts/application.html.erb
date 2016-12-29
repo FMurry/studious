@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag 'application', 
+    													media: 'all', 'data-turbolinks-track': 'reload'%>
+    <%= javascript_include_tag 'application','data-turbolinks-track': 'reload'%>
+    <%= render 'layouts/custom_fonts' %>
+
+		<!-- Theme CSS -->
+    <link href="https://blackrockdigital.github.io/startbootstrap-new-age/css/new-age.min.css" rel="stylesheet">
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="https://blackrockdigital.github.io/startbootstrap-new-age/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://blackrockdigital.github.io/startbootstrap-new-age/vendor/simple-line-icons/css/simple-line-icons.css">
+    <link rel="stylesheet" href="https://blackrockdigital.github.io/startbootstrap-new-age/vendor/device-mockups/device-mockups.min.css">
+  </head>
+
+  <body id="page-top">
+
+    <% if (params[:action] == "home") %>
+        <%= render 'layouts/home_navigation' %>
+    <% else %>
+        <%= render 'layouts/navigation' %>
+    <% end %>
+
+    <div class="<%= "container" if params[:action] != "home" %>">
+        <%= yield %>
+    </div>
+
+    <% if params[:action] == "home" %>
+        <%= render 'layouts/footer' %>
+    <% end %>
+    
+    <%= render 'layouts/js_files' %>
+    <%= debug(params) if Rails.env.development? %>
+  </body>
+</html>
