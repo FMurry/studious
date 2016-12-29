@@ -1,3 +1,6 @@
+require 'net/http'
+require 'json'
+
 class UsersController < ApplicationController
 
 	def show
@@ -36,9 +39,13 @@ class UsersController < ApplicationController
 
   	# Create a new user!
   	else
+      # ********************* CHANGE THE URL HERE ************************
+      url = 'https://api.spotify.com/v1/search?type=artist&q=tycho'
+      uri = URI(url)
+      response = Net::HTTP.get(uri)
+      json_response = JSON.parse(response)
   		
-  		
-  		flash.now[:success] = "Success!"
+  		flash.now[:success] = json_response
   		render 'new'
   	end
 
