@@ -119,6 +119,7 @@ apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), funct
 				// }
 				res.json({success: true, code: 200, msg:'accessing profile',
 					user: {
+						_id:user._id,
 						name:user.name,
 						email:user.email,
 						courses: user.courses

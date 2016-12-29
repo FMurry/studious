@@ -21,36 +21,48 @@ var courseSchema = new Schema({
 	},
 	sunday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	monday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	tuesday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	wednesday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	thursday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	friday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	saturday: {
 		type: Boolean,
-		required: true
+		required: true,
+		default: false
 	},
 	color: {
 		type: String,
 		required: true,
 		default: "#ff2e7d32"
+	},
+	isOnline: {
+		type: Boolean,
+		required: true,
+		default: false
 	}
 });
 
