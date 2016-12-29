@@ -1,10 +1,12 @@
 package xyz.fmsoft.studious;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,11 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import xyz.fmsoft.studious.Authentication.LoginActivity;
 import xyz.fmsoft.studious.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences sharedPreferences;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +31,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("token",Context.MODE_PRIVATE);
         String token = sharedPreferences.getString(getString(R.string.saved_jwt),"");
+        Log.d(TAG,token);
         if (!token.contains("JWT")) {
             //Token not found direct to Login
-
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
         else {
             //Login Here
+
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            //Just logout here
+            sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+            startActivity(new Intent(this,MainActivity.class));
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
