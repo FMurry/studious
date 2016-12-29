@@ -52,10 +52,15 @@ Start your mongodb by running mongod in terminal
 Example .env file (Inside server folder)
 
 ```javascript
+APPNAME=Studious
 MONGOLAB_URI_DEV=mongodb://localhost/Studious
-NODE_ENV=DEV
+NODE_ENV=dev
 MONGOLAB_URI_PROD=
-SECRET=
+SECRET="A Secret password Here"
+NODEMAILER="True if you want to send email when registering, false otherwise"
+NODEMAILER_SERVICE=Gmail
+NODEMAILER_EMAIL="Your email here"
+NODEMAILER_PASS="Password to email here"
 ```
 To start the server you can run
 ```javascript

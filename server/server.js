@@ -11,6 +11,7 @@ var Course = require('./app/models/course')
 var port = process.env.PORT || 3000;
 var jwt = require('jwt-simple');
 require('dotenv').config(); 
+var nodemailer = require('nodemailer');
 
 // get our request parameters
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -45,6 +46,36 @@ apiRoutes.post('/register', function(req, res){
 			name: req.body.name,
 			password: req.body.password
 		});
+
+		//Handles Email Sending when user signs up
+		if(process.env.NODEMAILER){
+			if(process.env.NODEMAILER==='true'){
+				var transporter = nodemailer.createTransport({
+					service: process.env.NODEMAILER_SERVICE,
+					auth: {
+						user: process.env.NODEMAILER_EMAIL,
+						pass: process.env.NODEMAILER_PASS
+					}
+
+				});
+				var mailOptions = {
+				from: process.env.NODEMAILER_EMAIL, // sender address
+				to: newUser.email, // list of receivers
+				subject: process.env.APPNAME, // Subject line
+				text: "Thanks for registering to Studious"
+				};
+
+				transporter.sendMail(mailOptions, function(error, info) {
+					if(error){
+						console.log(error);
+					}
+					else{
+						console.log('Message sent: ' + info.response);
+					}
+				});
+			}
+			
+		}
 
 		//Saves the user to db save hashes the password because of pre function
 		newUser.save(function(err) {
