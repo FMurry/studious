@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Course = require('./course');
+//var Assignment = require('./assignment');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
@@ -27,6 +28,7 @@ var userSchema = new Schema({
     	default: false
     },
     courses: [Course.schema]
+    //Here add assignments: [Assignment.schema]
 });
 
 //Operation to be done before save

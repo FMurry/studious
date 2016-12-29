@@ -22,3 +22,4 @@ course_ID: {type: mongoose.Schema.Types.ObjectId,  ref: 'Course'},
 
 //Uncomment this line when finished
 //module.exports = mongoose.model('Assignment', assignmentSchema);
+//When finished go to user.js and uncomment the lines.
