@@ -9,15 +9,15 @@ public class User {
     private String _id;
     private String name;
     private String email;
-    private Course[] courses;
+    private Term[] terms;
     private boolean verified;
 
 
-    public User(String _id, String name, String email, Course[] courses, boolean verified) {
+    public User(String _id, String name, String email, Term[] terms, boolean verified) {
         this._id = _id;
         this.name = name;
         this.email = email;
-        this.courses = courses;
+        this.terms = terms;
         this.verified = verified;
     }
 
@@ -33,8 +33,8 @@ public class User {
         return email;
     }
 
-    public Course[] getCourses() {
-        return courses;
+    public Term[] getTerms() {
+        return terms;
     }
 
     public boolean isVerified() {

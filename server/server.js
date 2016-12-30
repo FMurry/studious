@@ -356,22 +356,6 @@ app.get('/verify', function(req, res){
 						}
 
 					});
-					// User.update({_id: user._id},{
-					// 	verified: true,
-					// 	emailVerificationToken: {
-					// 		token: '',
-					// 		expires: ''
-					// 	}
-					// }, function(err, affected, resp){
-					// 	if(err){
-					// 		console.log(err);
-					// 	}
-					// 	else{
-					// 		res.send("<h1>Email verified successfully");
-							
-					// 		return;
-					// 	}
-					// });
 				}
 
 				
