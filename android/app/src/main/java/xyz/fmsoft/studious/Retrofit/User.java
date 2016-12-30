@@ -1,5 +1,7 @@
 package xyz.fmsoft.studious.Retrofit;
 
+import java.util.List;
+
 /**
  * Created by fredericmurry on 12/29/16.
  */
@@ -9,11 +11,11 @@ public class User {
     private String _id;
     private String name;
     private String email;
-    private Term[] terms;
+    private List<Term> terms;
     private boolean verified;
 
 
-    public User(String _id, String name, String email, Term[] terms, boolean verified) {
+    public User(String _id, String name, String email, List<Term> terms, boolean verified) {
         this._id = _id;
         this.name = name;
         this.email = email;
@@ -33,7 +35,7 @@ public class User {
         return email;
     }
 
-    public Term[] getTerms() {
+    public List<Term> getTerms() {
         return terms;
     }
 

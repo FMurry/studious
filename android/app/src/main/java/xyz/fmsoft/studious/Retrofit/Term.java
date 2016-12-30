@@ -1,5 +1,7 @@
 package xyz.fmsoft.studious.Retrofit;
 
+import java.util.List;
+
 /**
  * Created by fredericmurry on 12/29/16.
  */
@@ -11,9 +13,9 @@ public class Term {
     private String startDate;
     private String endDate;
     private String type;
-    private Course[] courses;
+    private List<Course> courses;
 
-    public Term(String name, String school, String startDate, String endDate, String type, Course[] courses) {
+    public Term(String name, String school, String startDate, String endDate, String type, List<Course> courses) {
         this.name = name;
         this.school = school;
         this.startDate = startDate;
@@ -42,7 +44,7 @@ public class Term {
         return type;
     }
 
-    public Course[] getCourses() {
+    public List<Course> getCourses() {
         return courses;
     }
 }

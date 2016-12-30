@@ -202,7 +202,7 @@ apiRoutes.get('/profile', passport.authenticate('jwt', { session: false}), funct
 						_id:user._id,
 						name:user.name,
 						email:user.email,
-						courses: user.courses,
+						terms: user.terms,
 						verified: user.verified
 					}
 				});

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,8 +18,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -33,6 +38,7 @@ import xyz.fmsoft.studious.Authentication.LoginActivity;
 import xyz.fmsoft.studious.R;
 import xyz.fmsoft.studious.Retrofit.Profile;
 import xyz.fmsoft.studious.Retrofit.RetrofitInterface;
+import xyz.fmsoft.studious.Retrofit.Term;
 import xyz.fmsoft.studious.Secret.Environment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         else{
                             headerEmail.setText(profile.getUser().getEmail()+" (unverified)");
                         }
+                        invalidateOptionsMenu();
                         headerName.setText(profile.getUser().getName());
                         progressDialog.dismiss();
                     }
@@ -145,6 +152,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
+        ArrayList<String> terms = new ArrayList<>();
+        if(profile != null && profile.getUser() != null) {
+            for (Term term : profile.getUser().getTerms()) {
+                terms.add(term.getName() + ": " + term.getSchool());
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, terms);
+        spinner.setAdapter(adapter);
         return true;
     }
 
@@ -156,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_spinner) {
             return true;
         }
 

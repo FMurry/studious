@@ -48,6 +48,10 @@ var userSchema = new Schema({
     	default: false
     },
     terms: [Term.schema],
+    pro: {
+		type: Boolean,
+		default: false
+	},
     emailVerificationToken: {
     	token: {
     		type: String
