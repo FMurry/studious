@@ -8,6 +8,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var User = require('./app/models/user');
 var Course = require('./app/models/course')
+var Term = require('./app/models/term')
+
 var port = process.env.PORT || 3000;
 var jwt = require('jwt-simple');
 require('dotenv').config(); 
@@ -227,6 +229,48 @@ getToken = function(headers) {
 	}
 }
 
+//Add a Term
+apiRoutes.post('/addTerm', passport.authenticate('jwt', { session: false}), function(req, res){
+	var token = getToken(req.headers);
+	if(token){
+		var decodedToken = jwt.decode(token, process.env.SECRET);
+		User.findOne({
+			email: decodedToken.email
+		}, function(err, user){
+			if(err){
+				throw err;
+			}
+
+			if(!user){
+				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
+			}
+			else{
+				var newTerm = new Term({
+					name: req.body.name,
+					school: req.body.school,
+					startDate: req.body.startDate,
+					endDate: req.body.endDate,
+					type: req.body.type,
+				});
+				user.terms.push(newTerm);
+				console.log("Password count: "+ user.password.length);
+				user.save(function(err) {
+					if(err){
+						console.log(err);
+						return res.json({ success: false, code: 401,msg: 'Term not Saved'})
+					}
+					res.json({success: true, code:200, msg: 'New Term saved Successfully'});
+				});
+			}
+		});
+	}
+	else{
+		return res.status(403).send({success: false, msg: 'No token provided.'});
+	}
+});
+
+
+//Add a course
 apiRoutes.post('/addCourse', passport.authenticate('jwt', { session: false}), function(req, res){
 	var token = getToken(req.headers);
 	if(token){
@@ -242,6 +286,7 @@ apiRoutes.post('/addCourse', passport.authenticate('jwt', { session: false}), fu
 				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
 			}
 			else{
+				var termID = req.body.termID
 				var newCourse = new Course({
 					courseID: req.body.courseID,
 					courseName: req.body.courseName,
@@ -257,7 +302,7 @@ apiRoutes.post('/addCourse', passport.authenticate('jwt', { session: false}), fu
 					saturday: req.body.saturday,
 					color: req.body.color
 				});
-				user.courses.push(newCourse);
+				user.terms.id(termID).courses.push(newCourse);
 				user.save(function(err) {
 					if(err){
 						return res.json({ success: false, code: 401,msg: 'Course Not Saved'})
@@ -297,27 +342,36 @@ app.get('/verify', function(req, res){
 				//User is verified so all links are invalid
 				res.end('<h1>Link no longer valid</h1>');
 			}
-			if(userEmailToken === req.query.tid) {
+			else if(userEmailToken === req.query.tid) {
 				console.log("There is a match");
 				var currentDate = new Date();
 				if(currentDate < user.emailVerificationToken.expires){
 					user.verified = true;
-					User.update({_id: user._id},{
-						verified: true,
-						emailVerificationToken: {
-							token: '',
-							expires: ''
-						}
-					}, function(err, affected, resp){
+					user.save(function(err){
 						if(err){
 							console.log(err);
 						}
 						else{
 							res.send("<h1>Email verified successfully");
-							
-							return;
 						}
+
 					});
+					// User.update({_id: user._id},{
+					// 	verified: true,
+					// 	emailVerificationToken: {
+					// 		token: '',
+					// 		expires: ''
+					// 	}
+					// }, function(err, affected, resp){
+					// 	if(err){
+					// 		console.log(err);
+					// 	}
+					// 	else{
+					// 		res.send("<h1>Email verified successfully");
+							
+					// 		return;
+					// 	}
+					// });
 				}
 
 				

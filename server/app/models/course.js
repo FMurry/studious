@@ -69,8 +69,32 @@ var courseSchema = new Schema({
 		type: Boolean,
 		required: true,
 		default: false
+	},
+	created_at: {
+		type: Date,
+		default: Date.now()
+	},
+	updated_at: {
+		type: Date,
+		default: Date.now()
 	}
 });
 
+courseSchema.pre('save', function(next){
+	var now = new Date();
+	this.updated_at = now;
+	if (!this.created_at) {
+		this.created_at = now;
+	}
+	next();
+});
 
+courseSchema.pre('update', function(next){
+	var now = new Date();
+	this.updated_at = now;
+	if (!this.created_at) {
+		this.created_at = now;
+	}
+	next();
+});
 module.exports = mongoose.model('Course', courseSchema);

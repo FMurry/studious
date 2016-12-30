@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var Course = require('./course');
+var Term = require('./term');
 //var Assignment = require('./assignment');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
@@ -19,7 +19,7 @@ var validateName = function(name) {
 };
 
 var validatePassword = function(password) {
-	return (password.length >= 8 && password.length <=24);
+	return (password.length >= 8 && password.length <=255);
 }
 
 var userSchema = new Schema({
@@ -47,7 +47,7 @@ var userSchema = new Schema({
     	required: true,
     	default: false
     },
-    courses: [Course.schema],
+    terms: [Term.schema],
     emailVerificationToken: {
     	token: {
     		type: String
@@ -55,12 +55,25 @@ var userSchema = new Schema({
     	expires: {
     		type: Date
     	}
-    }
-    //Here add assignments: [Assignment.schema]
+    },
+    created_at: {
+		type: Date,
+		default: Date.now()
+	},
+	updated_at: {
+		type: Date,
+		default: Date.now()
+	}
+
 });
 
 //Operation to be done before save
 userSchema.pre('save', function(next){
+	var now = new Date();
+	this.updated_at = now;
+	if (!this.created_at) {
+		this.created_at = now;
+	}
 	var user = this;
 	if(this.isModified('password') || this.isNew) {
 		bcrypt.genSalt(10, function(err, salt){

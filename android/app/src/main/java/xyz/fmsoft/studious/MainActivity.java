@@ -96,7 +96,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     else if(profile.getCode() == 200) {
                         //Profile Retrieved successfully
                         Log.d(TAG,profile.toString());
-                        headerEmail.setText(profile.getUser().getEmail());
+                        if(profile.getUser().isVerified()) {
+                            headerEmail.setText(profile.getUser().getEmail());
+                        }
+                        else{
+                            headerEmail.setText(profile.getUser().getEmail()+" (unverified)");
+                        }
                         headerName.setText(profile.getUser().getName());
                         progressDialog.dismiss();
                     }
@@ -164,21 +169,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id){
+            case R.id.nav_course:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nav_assignment:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_account:
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-            //Just logout here
-            sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
-            startActivity(new Intent(this,MainActivity.class));
-            finish();
+                break;
+            case R.id.nav_logout:
+                sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+                startActivity(new Intent(this,MainActivity.class));
+                finish();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

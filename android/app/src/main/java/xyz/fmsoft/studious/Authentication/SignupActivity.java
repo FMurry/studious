@@ -160,6 +160,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                     public void onFailure(Call<Login> call, Throwable t) {
                                         progressDialog.dismiss();
                                         Log.d(TAG, t.getMessage());
+                                        Toast.makeText(SignupActivity.this, "Check Email for Verification", Toast.LENGTH_SHORT).show();
                                         startActivity(new Intent(getBaseContext(), LoginActivity.class));
                                         finish();
 
