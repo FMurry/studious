@@ -17,6 +17,10 @@ public interface RetrofitInterface {
     @POST("login")
     Call<Login> login(@Field("email")String email, @Field("password")String password);
 
+    @FormUrlEncoded
+    @POST("register")
+    Call<Signup> signup(@Field("email")String email, @Field("password")String password, @Field("name")String name);
+
     @GET("profile")
     Call<Profile> getProfile(@Header("Authorization") String token);
 

@@ -85,7 +85,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onResponse(Call<Profile> call, Response<Profile> response) {
                     profile = response.body();
-                    if(profile.getCode() == 200) {
+                    if(profile == null){
+                        //Login Failed Somehow
+                        //Remove the token and have user sign in again
+                        sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+                        progressDialog.dismiss();
+                        startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                        finish();
+                    }
+                    else if(profile.getCode() == 200) {
                         //Profile Retrieved successfully
                         Log.d(TAG,profile.toString());
                         headerEmail.setText(profile.getUser().getEmail());

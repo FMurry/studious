@@ -10,10 +10,12 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,61 +53,83 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    public boolean isLoginValid() {
+        boolean valid = true;
+        String email = _email.getText().toString();
+        String password = _password.getText().toString();
+        if(email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            _email.setError("Enter a valid Email");
+            valid = false;
+        }
+        else{
+            _email.setError(null);
+        }
+
+        if(password.length() < 8 && password.length() > 24){
+            _email.setError("Password between 8 and 24 Alphanumeric characters");
+            valid = false;
+        }
+        else{
+            _password.setError(null);
+        }
+
+        return valid;
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.login_button:
-                //TODO: Add ProgressDialog
-                final ProgressDialog progressDialog = new ProgressDialog(this);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Please Wait.....");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .readTimeout(15, TimeUnit.SECONDS)
-                        .connectTimeout(15, TimeUnit.SECONDS)
-                        .build();
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(Environment.apiUrl)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-                RetrofitInterface request = retrofit.create(RetrofitInterface.class);
-                Call<Login> call = request.login(_email.getText().toString(),_password.getText().toString());
-                call.enqueue(new Callback<Login>() {
-                    @Override
-                    public void onResponse(Call<Login> call, Response<Login> response) {
-                        Login login = response.body();
-                        if (login.getCode() == 200){
-                            SharedPreferences sharedPreferences = getSharedPreferences("token", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.clear();
-                            editor.putString(getString(R.string.saved_jwt),login.getToken());
-                            editor.commit();
-                            progressDialog.dismiss();
-                            startActivity(new Intent(getBaseContext(), MainActivity.class));
-                            finish();
-                        }
-                        else if(login.getCode() == 502){
-                            progressDialog.dismiss();
-                            Toast.makeText(LoginActivity.this, "Password Incorrect", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            progressDialog.dismiss();
-                            if(login.getCode() == 501){
-                                Toast.makeText(LoginActivity.this, "No User found, Please Sign up", Toast.LENGTH_SHORT).show();
+                if(isLoginValid()) {
+                    final ProgressDialog progressDialog = new ProgressDialog(this);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Please Wait.....");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                            .readTimeout(15, TimeUnit.SECONDS)
+                            .connectTimeout(15, TimeUnit.SECONDS)
+                            .build();
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(Environment.apiUrl)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(okHttpClient)
+                            .build();
+                    RetrofitInterface request = retrofit.create(RetrofitInterface.class);
+                    Call<Login> call = request.login(_email.getText().toString(), _password.getText().toString());
+                    call.enqueue(new Callback<Login>() {
+                        @Override
+                        public void onResponse(Call<Login> call, Response<Login> response) {
+                            Login login = response.body();
+                            if (login.getCode() == 200) {
+                                SharedPreferences sharedPreferences = getSharedPreferences("token", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.clear();
+                                editor.putString(getString(R.string.saved_jwt), login.getToken());
+                                editor.commit();
+                                progressDialog.dismiss();
+                                startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                finish();
+                            } else if (login.getCode() == 502) {
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "Password Incorrect", Toast.LENGTH_SHORT).show();
+                            } else {
+                                progressDialog.dismiss();
+                                if (login.getCode() == 501) {
+                                    Toast.makeText(LoginActivity.this, "No User found, Please Sign up", Toast.LENGTH_SHORT).show();
+                                }
+                                Log.d(TAG, login.getSuccess());
                             }
-                            Log.d(TAG, login.getSuccess());
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<Login> call, Throwable t) {
-                        Log.d(TAG, t.getMessage());
-                        progressDialog.dismiss();
-                        Toast.makeText(LoginActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<Login> call, Throwable t) {
+                            Log.d(TAG, t.getMessage());
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
             case R.id.login_signup:
                 startActivity(new Intent(this, SignupActivity.class));
