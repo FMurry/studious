@@ -47,7 +47,15 @@ var userSchema = new Schema({
     	required: true,
     	default: false
     },
-    courses: [Course.schema]
+    courses: [Course.schema],
+    emailVerificationToken: {
+    	token: {
+    		type: String
+    	},
+    	expires: {
+    		type: Date
+    	}
+    }
     //Here add assignments: [Assignment.schema]
 });
 

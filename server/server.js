@@ -46,6 +46,19 @@ apiRoutes.post('/register', function(req, res){
 			name: req.body.name,
 			password: req.body.password
 		});
+		var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		var emailToken = '';
+		for (var i = 16; i > 0; --i) {
+			emailToken += chars[Math.round(Math.random() * (chars.length - 1))];
+		}
+		// create expiration date
+		var expires = new Date();
+		expires.setHours(expires.getHours() + 6);
+
+		newUser.emailVerificationToken = {
+			token: emailToken,
+			expires: expires
+		};
 
 		//Handles Email Sending when user signs up
 		if(process.env.NODEMAILER){
@@ -58,11 +71,12 @@ apiRoutes.post('/register', function(req, res){
 					}
 
 				});
-				var mailOptions = {
+				var link="http://"+req.get('host')+"/verify?id="+newUser._id+"&tid="+emailToken;
+				mailOptions = {
 				from: process.env.NODEMAILER_EMAIL, // sender address
 				to: newUser.email, // list of receivers
-				subject: process.env.APPNAME, // Subject line
-				text: "Thanks for registering to Studious"
+				subject : "Welcome to Studious",
+				html : "Hello and welcome to Studious,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" 
 				};
 
 				transporter.sendMail(mailOptions, function(error, info) {
@@ -71,6 +85,7 @@ apiRoutes.post('/register', function(req, res){
 					}
 					else{
 						console.log('Message sent: ' + info.response);
+
 					}
 				});
 			}
@@ -255,6 +270,60 @@ apiRoutes.post('/addCourse', passport.authenticate('jwt', { session: false}), fu
 	else{
 		return res.status(403).send({success: false, msg: 'No token provided.'});
 	}
+});
+
+//Verify the user email
+app.get('/verify', function(req, res){
+	console.log("Verify Reached");
+	console.log(req.query.id);
+	console.log(req.query.tid);
+	User.findOne({
+		_id: req.query.id
+	}, function(err, user){
+		if(err){
+			throw err;
+			res.send('<h1>Error has occured please request another verification email');
+		}
+		else if(!user){
+			console.log("User not found");
+			res.send("<h1>Invalid email</h1>")
+			res.end();
+			return;
+		}
+		else{
+			//Verify Here
+			var userEmailToken = user.emailVerificationToken.token;
+			if(user.verified == true){
+				//User is verified so all links are invalid
+				res.end('<h1>Link no longer valid</h1>');
+			}
+			if(userEmailToken === req.query.tid) {
+				console.log("There is a match");
+				var currentDate = new Date();
+				if(currentDate < user.emailVerificationToken.expires){
+					user.verified = true;
+					User.update({_id: user._id},{
+						verified: true,
+						emailVerificationToken: {
+							token: '',
+							expires: ''
+						}
+					}, function(err, affected, resp){
+						if(err){
+							console.log(err);
+						}
+						else{
+							res.send("<h1>Email verified successfully");
+							
+							return;
+						}
+					});
+				}
+
+				
+			}
+		}
+	})
 });
 app.use('/api', apiRoutes);
  
