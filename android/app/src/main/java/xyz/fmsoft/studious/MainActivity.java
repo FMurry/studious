@@ -5,8 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +20,11 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +45,7 @@ import xyz.fmsoft.studious.Retrofit.RetrofitInterface;
 import xyz.fmsoft.studious.Retrofit.Term;
 import xyz.fmsoft.studious.Secret.Environment;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private SharedPreferences sharedPreferences;
     private static final String TAG = "MainActivity";
@@ -50,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.nav_view)NavigationView navigationView;
     @BindView(R.id.drawer_layout)DrawerLayout drawer;
     @BindView(R.id.toolbar)Toolbar toolbar;
+    @BindView(R.id.main_fab_menu)FloatingActionMenu fabMenu;
+    @BindView(R.id.main_fab_addCourse)FloatingActionButton addCourseButton;
+    @BindView(R.id.main_fab_addAssignment)FloatingActionButton addAssignmentButton;
+    @BindView(R.id.main_fab_addTerm)FloatingActionButton addTermButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final TextView headerEmail = ButterKnife.findById(headerLayout,R.id.nav_header_email);
         final TextView headerName = ButterKnife.findById(headerLayout, R.id.nav_header_name);
         final ProgressDialog progressDialog = new ProgressDialog(this);
+        addCourseButton.setOnClickListener(this);
+        addAssignmentButton.setOnClickListener(this);
+        addTermButton.setOnClickListener(this);
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Please Wait");
@@ -151,17 +162,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
         ArrayList<String> terms = new ArrayList<>();
         if(profile != null && profile.getUser() != null) {
             for (Term term : profile.getUser().getTerms()) {
                 terms.add(term.getName() + ": " + term.getSchool());
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, terms);
-        spinner.setAdapter(adapter);
+        else{
+
+        }
+
+        if(terms.size() > 0) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            MenuItem menuItem = menu.findItem(R.id.action_spinner);
+            Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, terms);
+            spinner.setAdapter(adapter);
+        }
+        else{
+            getMenuInflater().inflate(R.menu.default_main, menu);
+        }
         return true;
     }
 
@@ -173,6 +194,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        switch (id){
+            case R.id.action_spinner:
+
+                break;
+            case R.id.action_add_term:
+                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
+        }
         if (id == R.id.action_spinner) {
             return true;
         }
@@ -208,4 +237,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.main_fab_addCourse:
+                //TODO: Add Course Here
+                break;
+            case R.id.main_fab_addAssignment:
+                //TODO: Add assignment here
+                break;
+            case R.id.action_add_term:
+                //TODO: Add Term Here
+                break;
+        }
+        Toast.makeText(this, "Not yet Implemented", Toast.LENGTH_SHORT).show();
+    }
 }
