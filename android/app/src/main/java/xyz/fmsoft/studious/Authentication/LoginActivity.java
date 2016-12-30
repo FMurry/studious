@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
@@ -31,12 +34,13 @@ import xyz.fmsoft.studious.Retrofit.Login;
 import xyz.fmsoft.studious.Retrofit.RetrofitInterface;
 import xyz.fmsoft.studious.Secret.Environment;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     @BindView(R.id.login_email)AppCompatEditText _email;
     @BindView(R.id.login_password)AppCompatEditText _password;
     @BindView(R.id.login_button)AppCompatButton _loginButton;
     @BindView(R.id.login_signup)AppCompatTextView _signup;
+    @BindView(R.id.login_error)AppCompatTextView _error;
 
     private static final String TAG = "LoginActivity";
     @Override
@@ -82,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.login_button:
                 if(isLoginValid()) {
                     final ProgressDialog progressDialog = new ProgressDialog(this);
+                    _error.setVisibility(View.GONE);
                     progressDialog.setIndeterminate(true);
                     progressDialog.setMessage("Please Wait.....");
                     progressDialog.setCancelable(false);
@@ -111,12 +116,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(new Intent(getBaseContext(), MainActivity.class));
                                 finish();
                             } else if (login.getCode() == 502) {
+                                //Password Incorrect
                                 progressDialog.dismiss();
-                                Toast.makeText(LoginActivity.this, "Password Incorrect", Toast.LENGTH_SHORT).show();
+                                _error.setText(getResources().getString(R.string.login_incorrect));
+                                _error.setVisibility(View.VISIBLE);
+                                _loginButton.setEnabled(false);
+                                _password.addTextChangedListener(LoginActivity.this);
                             } else {
                                 progressDialog.dismiss();
                                 if (login.getCode() == 501) {
-                                    Toast.makeText(LoginActivity.this, "No User found, Please Sign up", Toast.LENGTH_SHORT).show();
+                                    //No User found
+                                    _error.setText(getResources().getString(R.string.login_incorrect));
+                                    _error.setVisibility(View.VISIBLE);
+                                    _loginButton.setEnabled(false);
+                                    _password.addTextChangedListener(LoginActivity.this);
                                 }
                                 Log.d(TAG, login.getSuccess());
                             }
@@ -137,5 +150,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        _loginButton.setEnabled(true);
+        _password.removeTextChangedListener(this);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="xyz.fmsoft.studious.Authentication.LoginActivity"
-    android:background="@drawable/white_pattern_backgound1">
+    android:background="@drawable/sayagata_background">
     <LinearLayout
         android:id="@+id/login_linear_layout"
         android:layout_width="match_parent"
@@ -31,6 +31,7 @@
             android:textColor="@color/blue"
             android:textSize="60sp"
             android:typeface="serif"/>
+
 
         <!-- Email -->
         <android.support.design.widget.TextInputLayout
@@ -68,6 +69,15 @@
                 android:textColor="@color/blue"
                 android:textColorHighlight="@color/colorAccent"/>
         </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/login_error"
+            android:visibility="gone"
+            android:textColor="@color/red"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
 
         <!-- Login Button -->
         <android.support.v7.widget.AppCompatButton

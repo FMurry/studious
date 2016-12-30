@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="xyz.fmsoft.studious.Authentication.SignupActivity"
-    android:background="@drawable/white_pattern_backgound1">
+    android:background="@drawable/sayagata_background">
     <LinearLayout
         android:id="@+id/signup_linear_layout"
         android:layout_width="match_parent"
