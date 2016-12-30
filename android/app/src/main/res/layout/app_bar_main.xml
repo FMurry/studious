@@ -36,14 +36,17 @@
         app:menu_animationDelayPerItem="0"
         app:menu_shadowColor="#444"
         app:menu_colorNormal="@color/colorPrimaryDark"
-        app:menu_colorPressed="@color/colorPrimary"
-        app:menu_colorRipple="@color/colorAccent">
+        app:menu_colorPressed="@color/colorAccent"
+        app:menu_colorRipple="@color/colorPrimary">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/main_fab_addCourse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_book_open_variant_white_36dp"
+            app:fab_colorNormal="@color/brown"
+            app:fab_colorDisabled="@color/blue_grey"
+            app:fab_colorRipple="@color/blue"
             app:fab_label="Add Course"/>
 
         <com.github.clans.fab.FloatingActionButton
@@ -51,6 +54,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_note_white_36dp"
+            app:fab_colorNormal="@color/brown"
+            app:fab_colorDisabled="@color/blue_grey"
+            app:fab_colorRipple="@color/blue"
             app:fab_label="Add Assignment"/>
 
         <com.github.clans.fab.FloatingActionButton
@@ -58,6 +64,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_school_white_36dp"
+            app:fab_colorNormal="@color/brown"
+            app:fab_colorDisabled="@color/blue_grey"
+            app:fab_colorRipple="@color/blue"
             app:fab_label="Add Term" />
 
     </com.github.clans.fab.FloatingActionMenu>

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Term {
 
+    private String _id;
     private String name;
     private String school;
     private String startDate;
@@ -15,7 +16,8 @@ public class Term {
     private String type;
     private List<Course> courses;
 
-    public Term(String name, String school, String startDate, String endDate, String type, List<Course> courses) {
+    public Term(String _id, String name, String school, String startDate, String endDate, String type, List<Course> courses) {
+        this._id = _id;
         this.name = name;
         this.school = school;
         this.startDate = startDate;
@@ -24,6 +26,7 @@ public class Term {
         this.courses = courses;
     }
 
+    public String get_id() { return _id;}
     public String getName() {
         return name;
     }
