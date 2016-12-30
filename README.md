@@ -56,6 +56,7 @@ APPNAME=Studious
 MONGOLAB_URI_DEV=mongodb://localhost/Studious
 NODE_ENV=dev
 MONGOLAB_URI_PROD=
+PORT=5000
 SECRET="A Secret password Here"
 NODEMAILER="True if you want to send email when registering, false otherwise"
 NODEMAILER_SERVICE=Gmail
