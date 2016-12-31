@@ -21,7 +21,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Authentication.LoginActivity" />
-        <activity android:name=".Authentication.SignupActivity"></activity>
+
+        <activity android:name=".Authentication.SignupActivity" />
+
+        <activity android:name=".Forms.AddTermActivity"></activity>
     </application>
 
 </manifest>

@@ -8,5 +8,8 @@
     <string name="sign_up">No Account Sign up Here!</string>
     <string name="log_in">Already have an account? Log in here!!</string>
     <string name="login_incorrect">Incorrect Login Information</string>
+    <string name="add_term_title">Add A Term</string>
+    <string name="add_course_title">Add A Course</string>
+    <string name="add_assignment_title">Add A Assignment</string>
 
 </resources>

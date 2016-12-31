@@ -39,6 +39,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import xyz.fmsoft.studious.Authentication.LoginActivity;
+import xyz.fmsoft.studious.Forms.AddTermActivity;
 import xyz.fmsoft.studious.R;
 import xyz.fmsoft.studious.Retrofit.Profile;
 import xyz.fmsoft.studious.Retrofit.RetrofitInterface;
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private SharedPreferences sharedPreferences;
     private static final String TAG = "MainActivity";
+    private static final int ADD_TERM_FLAG = 1;
+    private static final int ADD_COURSE_FLAG = 2;
+    private static final int ADD_ASSIGNMENT_FLAG = 3;
+
     private Profile profile;
 
     @BindView(R.id.nav_view)NavigationView navigationView;
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<String> terms = new ArrayList<>();
         if(profile != null && profile.getUser() != null) {
             for (Term term : profile.getUser().getTerms()) {
-                terms.add(term.getName() + ": " + term.getSchool());
+                terms.add(term.getName());
             }
         }
         else{
@@ -177,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             MenuItem menuItem = menu.findItem(R.id.action_spinner);
             Spinner spinner = (Spinner) MenuItemCompat.getActionView(menuItem);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, terms);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.app_bar_spinner, terms);
             spinner.setAdapter(adapter);
         }
         else{
@@ -199,7 +204,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 break;
             case R.id.action_add_term:
-                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Add Term Pressed");
+                Intent addTerm = new Intent(this, AddTermActivity.class);
+                startActivityForResult(addTerm, ADD_TERM_FLAG);
                 break;
         }
         if (id == R.id.action_spinner) {
@@ -242,14 +249,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (view.getId()){
             case R.id.main_fab_addCourse:
                 //TODO: Add Course Here
+                fabMenu.close(false);
                 break;
             case R.id.main_fab_addAssignment:
                 //TODO: Add assignment here
+                fabMenu.close(true);
                 break;
-            case R.id.action_add_term:
-                //TODO: Add Term Here
+            case R.id.main_fab_addTerm:
+                Log.d(TAG, "Add Term Pressed");
+                Intent addTerm = new Intent(this, AddTermActivity.class);
+                startActivityForResult(addTerm, ADD_TERM_FLAG);
+                fabMenu.close(false);
                 break;
         }
-        Toast.makeText(this, "Not yet Implemented", Toast.LENGTH_SHORT).show();
+
+    }
+
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case ADD_COURSE_FLAG:
+                if(resultCode == RESULT_OK) {
+                    //User Created a Course
+                    startActivity(getIntent());
+                }
+                else{
+                    //User Cancelled
+                    Log.d(TAG,"Add Course Cancelled");
+                }
+                break;
+            case ADD_ASSIGNMENT_FLAG:
+                if(resultCode == RESULT_OK) {
+                    //User Created an Assignment
+                    startActivity(getIntent());
+                }
+                else{
+                    //User Cancelled
+                    Log.d(TAG,"Add Assignment Cancelled");
+                }
+                break;
+            case ADD_TERM_FLAG:
+                if(resultCode == RESULT_OK) {
+                    //User created a Term
+                    startActivity(getIntent());
+                }
+                else{
+                    //User Cancelled
+                    Log.d(TAG,"Add Course Cancelled");
+                }
+                break;
+        }
     }
 }

@@ -24,4 +24,9 @@ public interface RetrofitInterface {
     @GET("profile")
     Call<Profile> getProfile(@Header("Authorization") String token);
 
+    @FormUrlEncoded
+    @POST("addTerm")
+    Call<Response> addTerm(@Header("Authorization")String token, @Field("name")String name, @Field("school")String school,
+                           @Field("startDate")String startDate, @Field("endDate")String endDate, @Field("type")String type);
+
 }
