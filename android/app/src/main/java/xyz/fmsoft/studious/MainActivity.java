@@ -299,7 +299,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case ADD_TERM_FLAG:
                 if(resultCode == RESULT_OK) {
                     //User created a Term
+                    finish();
                     startActivity(getIntent());
+
+                    Log.d(TAG,"Recieved reset from Add Term");
                 }
                 else{
                     //User Cancelled
