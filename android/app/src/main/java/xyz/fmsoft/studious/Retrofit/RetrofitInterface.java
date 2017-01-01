@@ -17,6 +17,9 @@ public interface RetrofitInterface {
     @POST("login")
     Call<Login> login(@Field("email")String email, @Field("password")String password);
 
+    @POST("auth/google/token")
+    Call<Profile> googleLogin(@Header("access_token")String token);
+
     @FormUrlEncoded
     @POST("register")
     Call<Signup> signup(@Field("email")String email, @Field("password")String password, @Field("name")String name);
@@ -28,5 +31,6 @@ public interface RetrofitInterface {
     @POST("addTerm")
     Call<Response> addTerm(@Header("Authorization")String token, @Field("name")String name, @Field("school")String school,
                            @Field("startDate")String startDate, @Field("endDate")String endDate, @Field("type")String type);
+
 
 }

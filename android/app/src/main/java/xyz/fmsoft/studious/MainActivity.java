@@ -237,6 +237,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this,MainActivity.class));
                 finish();
                 break;
+            case R.id.nav_send:
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email_contact)});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                emailIntent.setType("message/rfc822");
+                startActivity(Intent.createChooser(emailIntent, "Send Email using"));
+                break;
+            case R.id.nav_share:
+                Toast.makeText(this, "Not Yet Implemented", Toast.LENGTH_SHORT).show();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -19,7 +19,15 @@ var validateName = function(name) {
 };
 
 var validatePassword = function(password) {
-	return (password.length >= 8 && password.length <=255);
+	if(password){
+		return (password.length >= 8 && password.length <=255);
+	}
+	else if(this.googleID){
+		return true
+	}
+	else{
+		return false;
+	}
 }
 
 var userSchema = new Schema({
@@ -37,9 +45,20 @@ var userSchema = new Schema({
         validate: [validateEmail, 'Please fill a valid email address'],
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
 	},
+	googleID: {
+		type: String,
+		default: null
+	},
+	googleRefreshToken: {
+		type: String,
+		default: null
+	},
+	imageURL: {
+		type: String,
+		default: null
+	},
 	password: {
         type: String,
-        required: true,
         validate: [validatePassword, 'Please Enter A Password between 8 and 24 characters']
     },
     verified: {
@@ -67,7 +86,7 @@ var userSchema = new Schema({
 	updated_at: {
 		type: Date,
 		default: Date.now()
-	}
+	},
 
 });
 
@@ -79,7 +98,7 @@ userSchema.pre('save', function(next){
 		this.created_at = now;
 	}
 	var user = this;
-	if(this.isModified('password') || this.isNew) {
+	if((this.isModified('password') || this.isNew) && this.password) {
 		bcrypt.genSalt(10, function(err, salt){
 			if(err){
 				return next(err);

@@ -24,7 +24,10 @@ app.use(morgan('dev'));
 
 // Use the passport package in our application
 app.use(passport.initialize());
-require('./config/passport')(passport);
+require('./config/passport').auth(passport);
+require('./config/passport').google(passport);
+require('./config/passport').googleToken(passport);
+
 
 // demo Route (GET http://localhost:8080)
 app.get('/', function(req, res) {
@@ -364,8 +367,42 @@ app.get('/verify', function(req, res){
 		}
 	})
 });
+
+//
+apiRoutes.get('/', function(req, res) {
+  res.send('API HOME');
+});
+app.get('/fail', function(req, res) {
+	res.send('Oauth Auth Failed');
+});
+
+//Google Auth Stuff
+apiRoutes.get(process.env.GOOGLE_AUTH_URL, passport.authenticate('google', { scope: ['profile', 'email'] }));
+apiRoutes.get(process.env.GOOGLE_CALLBACK_URL,
+	passport.authenticate('google', { failureRedirect: '/fail' }),
+	function(req, res) {
+		// Successful authentication, redirect home.
+		res.json({success: true, code:200 });
+
+});
+
+//This logs in Users for Mobile Apps
+apiRoutes.post('/auth/google/token', passport.authenticate('google-token',{scope: ['https://www.googleapis.com/auth/userinfo.profile',
+                                          'https://www.googleapis.com/auth/userinfo.email'],
+                                  accessType: 'offline', approvalPrompt: 'force'}),
+ function(req, res) {
+  res.json({success: true, code:200, message: "Google Auth successful", user:req.user});
+});
+
+apiRoutes.post('/google/profile', passport.authenticate('google-token'),
+ function(req, res) {
+  res.json(req.user);
+});
 app.use('/api', apiRoutes);
+
  
 // Start the server
 app.listen(port);
 console.log('Studious Listening at http://localhost:' + port);
+
+
