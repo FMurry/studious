@@ -6,6 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="saved_jwt">JWT</string>
     <string name="saved_googleID">GOOGLEID</string>
+    <string name="saved_googleEmail">GOOGLEEMAIL</string>
     <string name="sign_up">No Account Sign up Here!</string>
     <string name="log_in">Already have an account? Log in here!!</string>
     <string name="login_incorrect">Incorrect Login Information</string>

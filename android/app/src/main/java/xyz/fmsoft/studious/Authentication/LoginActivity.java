@@ -240,11 +240,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 Profile profile = response.body();
-                Log.d(TAG,profile.toString());
-                progressDialog.dismiss();
-                if(profile.getCode()==200){
-                    Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                if(profile == null) {
+                    Toast.makeText(LoginActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                }else {
+                    if(profile.getCode()==200){
+                        Log.d(TAG,"Google Login Successful");
+                        SharedPreferences sharedPreferences = getSharedPreferences("token", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.putString(getString(R.string.saved_googleID), profile.getUser().getGoogleID());
+                        editor.putString(getString(R.string.saved_googleEmail), profile.getUser().getEmail());
+                        editor.commit();
+                        progressDialog.dismiss();
+                        startActivity(new Intent(getBaseContext(), MainActivity.class));
+                        finish();
+                    }
+                    else{
+                        Toast.makeText(LoginActivity.this, "Sign in Failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                progressDialog.dismiss();
             }
 
             @Override
@@ -289,73 +304,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public class GetUsernameTask extends AsyncTask<Void, Void, Void> {
-        LoginActivity mActivity;
-        String mScope;
-        String mEmail;
-        String authToken;
 
-        GetUsernameTask(LoginActivity activity, String name, String scope) {
-            this.mActivity = activity;
-            this.mScope = scope;
-            this.mEmail = name;
-            authToken="";
-        }
-
-        /**
-         * Executes the asynchronous job. This runs when you call execute()
-         * on the AsyncTask instance.
-         */
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                String token = fetchToken();
-                if (token != null) {
-                    Log.d(TAG, "Got the token");
-                    Log.d(TAG, token);
-                    // **Insert the good stuff here.**
-                    // Use the token to access the user's Google data.
-                    authToken=token;
-
-
-                }
-            } catch (IOException e) {
-                // The fetchToken() method handles Google-specific exceptions,
-                // so this indicates something went wrong at a higher level.
-                // TIP: Check for network connectivity before starting the AsyncTask.
-                Log.d(TAG,e.getMessage());
-
-            }
-            return null;
-        }
-
-        /**
-         * Gets an authentication token from Google and handles any
-         * GoogleAuthException that may occur.
-         */
-        protected String fetchToken() throws IOException {
-            try {
-                GoogleAuthUtil.clearToken(mActivity,mActivity.oldToken);
-                oldToken = GoogleAuthUtil.getToken(mActivity,mEmail,mScope);
-                return GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
-            } catch (UserRecoverableAuthException userRecoverableException) {
-                // GooglePlayServices.apk is either old, disabled, or not present
-                // so we need to show the user some UI in the activity to recover.
-                mActivity.handleException(userRecoverableException);
-            } catch (GoogleAuthException fatalException) {
-                // Some other type of unrecoverable exception has occurred.
-                // Report and log the error as appropriate for your app.
-                Log.d(TAG,fatalException.getMessage());
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            mActivity.googleLogin(authToken);
-        }
-    }
     /**
      * This method is a hook for background threads and async tasks that need to
      * provide the user a response UI when an exception occurs.

@@ -1,5 +1,6 @@
 package xyz.fmsoft.studious;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +27,11 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.Scopes;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,12 +39,14 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import xyz.fmsoft.studious.Authentication.GetUsernameTask;
 import xyz.fmsoft.studious.Authentication.LoginActivity;
 import xyz.fmsoft.studious.Forms.AddTermActivity;
 import xyz.fmsoft.studious.R;
@@ -53,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int ADD_TERM_FLAG = 1;
     private static final int ADD_COURSE_FLAG = 2;
     private static final int ADD_ASSIGNMENT_FLAG = 3;
+    private static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
+    private static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
+    private static final int REQUEST_CODE_RECOVER_FROM_AUTH_ERROR = 10002;
 
     private Profile profile;
 
@@ -70,28 +82,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        addCourseButton.setOnClickListener(this);
+        addAssignmentButton.setOnClickListener(this);
+        addTermButton.setOnClickListener(this);
         View headerLayout = navigationView.getHeaderView(0);
         final TextView headerEmail = ButterKnife.findById(headerLayout,R.id.nav_header_email);
         final TextView headerName = ButterKnife.findById(headerLayout, R.id.nav_header_name);
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        addCourseButton.setOnClickListener(this);
-        addAssignmentButton.setOnClickListener(this);
-        addTermButton.setOnClickListener(this);
         progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
+        //progressDialog.setCancelable(false);
         progressDialog.setMessage("Please Wait");
         progressDialog.show();
         sharedPreferences = this.getSharedPreferences("token",Context.MODE_PRIVATE);
         final String token = sharedPreferences.getString(getString(R.string.saved_jwt),"");
-
-        if (!token.contains("JWT")) {
+        final String googleID = sharedPreferences.getString(getString(R.string.saved_googleID),"");
+        final String googleEmail = sharedPreferences.getString(getString(R.string.saved_googleEmail),"");
+        if (token.equals("") && googleID.equals("") && googleEmail.equals("")) {
             //Token not found direct to Login
             progressDialog.dismiss();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
-        else {
-            //Get the profile Here
+        else if(token.contains("JWT")){
+            //User Logged in with email and password
             final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .readTimeout(15, TimeUnit.SECONDS)
                     .connectTimeout(15, TimeUnit.SECONDS)
@@ -140,9 +153,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onFailure(Call<Profile> call, Throwable t) {
-
+                    Log.d(TAG,t.getMessage());
+                    Toast.makeText(getBaseContext(),"Internal Server Error",Toast.LENGTH_LONG);
                 }
             });
+
+        }
+        else if((!googleEmail.equals("")) && (!googleID.equals(""))){
+            //User Logged in with google Account
+            final String SCOPES = "oauth2:" + Scopes.PLUS_LOGIN+" https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+            new GetUsernameTask(MainActivity.this, googleEmail, SCOPES).execute();
+            progressDialog.dismiss();
+        }
+        else{
+            //User Not Logged In
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(getString(R.string.saved_googleEmail));
+            editor.remove(getString(R.string.saved_jwt));
+            editor.remove(getString(R.string.saved_googleID));
+            editor.commit();
+            startActivity(new Intent(this,LoginActivity.class));
+            finish();
 
         }
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -233,7 +264,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 break;
             case R.id.nav_logout:
-                sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove(getString(R.string.saved_googleEmail));
+                editor.remove(getString(R.string.saved_jwt));
+                editor.remove(getString(R.string.saved_googleID));
+                editor.commit();
                 startActivity(new Intent(this,MainActivity.class));
                 finish();
                 break;
@@ -321,5 +356,99 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
         }
+    }
+
+
+    public void googleLogin(String token) {
+        View headerLayout = navigationView.getHeaderView(0);
+        final TextView headerEmail = ButterKnife.findById(headerLayout,R.id.nav_header_email);
+        final TextView headerName = ButterKnife.findById(headerLayout, R.id.nav_header_name);
+        final CircleImageView profileImage = ButterKnife.findById(headerLayout, R.id.nav_header_profile_image);
+        final ImageView gplusIcon = ButterKnife.findById(headerLayout, R.id.nav_header_gplus);
+        gplusIcon.setVisibility(View.VISIBLE);
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(15, TimeUnit.SECONDS)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Environment.apiUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+        RetrofitInterface request = retrofit.create(RetrofitInterface.class);
+        Call<Profile> call = request.googleLogin(token);
+        call.enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                profile = response.body();
+                if(profile == null){
+                    //Login Failed Somehow
+                    //Remove the token and have user sign in again
+                    sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+                    startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                    finish();
+                }
+                else if(profile.getCode() == 200) {
+                    //Profile Retrieved successfully
+                    Log.d(TAG,profile.toString());
+                    if(profile.getUser().isVerified()) {
+                        headerEmail.setText(profile.getUser().getEmail());
+                    }
+                    else{
+                        headerEmail.setText(profile.getUser().getEmail()+" (unverified)");
+                    }
+                    invalidateOptionsMenu();
+                    headerName.setText(profile.getUser().getName());
+                    Picasso.with(getBaseContext())
+                            .load(profile.getUser().getImageURL())
+                            .fit()
+                            .into(profileImage);
+                }
+                else{
+                    //Login Failed Somehow
+                    //Remove the token and have user sign in again
+                    sharedPreferences.edit().remove(getString(R.string.saved_jwt)).commit();
+                    startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+                Toast.makeText(MainActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    /**
+     * This method is a hook for background threads and async tasks that need to
+     * provide the user a response UI when an exception occurs.
+     */
+    public void handleException(final Exception e) {
+        // Because this call comes from the AsyncTask, we must ensure that the following
+        // code instead executes on the UI thread.
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (e instanceof GooglePlayServicesAvailabilityException) {
+                    // The Google Play services APK is old, disabled, or not present.
+                    // Show a dialog created by Google Play services that allows
+                    // the user to update the APK
+                    int statusCode = ((GooglePlayServicesAvailabilityException)e)
+                            .getConnectionStatusCode();
+                    Dialog dialog = GooglePlayServicesUtil.getErrorDialog(statusCode,
+                            MainActivity.this,
+                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
+                    dialog.show();
+                } else if (e instanceof UserRecoverableAuthException) {
+                    // Unable to authenticate, such as when the user has not yet granted
+                    // the app access to the account, but the user can fix this.
+                    // Forward the user to an activity in Google Play services.
+                    Intent intent = ((UserRecoverableAuthException)e).getIntent();
+                    startActivityForResult(intent,
+                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
+                }
+            }
+        });
     }
 }

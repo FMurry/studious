@@ -14,15 +14,19 @@ public class User {
     private final List<Term> terms;
     private final boolean verified;
     private final boolean pro;
+    private final String imageURL;
+    private final String googleID;
 
 
-    public User(String _id, String name, String email, List<Term> terms, boolean verified, boolean pro) {
+    public User(String _id, String name, String email, List<Term> terms, boolean verified, boolean pro, String imageURL,String googleID) {
         this._id = _id;
         this.name = name;
         this.email = email;
         this.terms = terms;
         this.verified = verified;
         this.pro = pro;
+        this.imageURL = imageURL;
+        this.googleID = googleID;
     }
 
     public String get_id() {
@@ -46,6 +50,14 @@ public class User {
     }
 
     public boolean isPro() {return pro;}
+
+    public String getGoogleID() {
+        return googleID;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
 
     @Override
     public String toString() {

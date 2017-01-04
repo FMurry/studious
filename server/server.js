@@ -65,38 +65,6 @@ apiRoutes.post('/register', function(req, res){
 			expires: expires
 		};
 
-		//Handles Email Sending when user signs up
-		if(process.env.NODEMAILER){
-			if(process.env.NODEMAILER==='true'){
-				var transporter = nodemailer.createTransport({
-					service: process.env.NODEMAILER_SERVICE,
-					auth: {
-						user: process.env.NODEMAILER_EMAIL,
-						pass: process.env.NODEMAILER_PASS
-					}
-
-				});
-				var link="http://"+req.get('host')+"/verify?id="+newUser._id+"&tid="+emailToken;
-				mailOptions = {
-				from: process.env.NODEMAILER_EMAIL, // sender address
-				to: newUser.email, // list of receivers
-				subject : "Welcome to Studious",
-				html : "Hello and welcome to Studious,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" 
-				};
-
-				transporter.sendMail(mailOptions, function(error, info) {
-					if(error){
-						console.log(error);
-					}
-					else{
-						console.log('Message sent: ' + info.response);
-
-					}
-				});
-			}
-			
-		}
-
 		//Saves the user to db save hashes the password because of pre function
 		newUser.save(function(err) {
 			if(err){
@@ -128,8 +96,40 @@ apiRoutes.post('/register', function(req, res){
 					return res.json({ success: false, code: 401,msg: "Internal Server Error"})
 				}
 			}
+			//Handles Email Sending when user signs up
+			if(process.env.NODEMAILER){
+				if(process.env.NODEMAILER==='true'){
+					var transporter = nodemailer.createTransport({
+						service: process.env.NODEMAILER_SERVICE,
+						auth: {
+							user: process.env.NODEMAILER_EMAIL,
+							pass: process.env.NODEMAILER_PASS
+						}
+					});
+					var link="http://"+req.get('host')+"/verify?id="+newUser._id+"&tid="+emailToken;
+					mailOptions = {
+						from: process.env.NODEMAILER_EMAIL, // sender address
+						to: newUser.email, // list of receivers
+						subject : "Welcome to Studious",
+						html : "Hello and welcome to Studious,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>" 
+					};
+
+					transporter.sendMail(mailOptions, function(error, info) {
+						if(error){
+							console.log(error);
+						}
+						else{
+							console.log('Message sent: ' + info.response);
+						}
+					});
+				}
+			}
 			res.json({success: true, code:200, msg: 'New user created successfully'});
 		});
+
+		
+
+		
 	}
 });
 
@@ -228,18 +228,54 @@ getToken = function(headers) {
 			return null;
 		}
 	}
+	else if(headers && headers.access_token){
+		return headers.access_token;
+	}
 	else{
 		return null;
 	}
 }
 
 //Add a Term
-apiRoutes.post('/addTerm', passport.authenticate('jwt', { session: false}), function(req, res){
+apiRoutes.post('/addTerm', passport.authenticate(['jwt', 'google-token'], { session: false}), function(req, res){
 	var token = getToken(req.headers);
-	if(token){
+	if(token.includes("JWT")){
 		var decodedToken = jwt.decode(token, process.env.SECRET);
 		User.findOne({
 			email: decodedToken.email
+		}, function(err, user){
+			if(err){
+				throw err;
+			}
+
+			if(!user){
+				return res.status(403).send({success: false, code:501, msg: 'Authentication failed. User not found.'});
+			}
+			else{
+				var newTerm = new Term({
+					name: req.body.name,
+					school: req.body.school,
+					startDate: req.body.startDate,
+					endDate: req.body.endDate,
+					type: req.body.type,
+				});
+				user.terms.push(newTerm);
+				console.log("Password count: "+ user.password.length);
+				user.save(function(err) {
+					if(err){
+						console.log(err);
+						return res.json({ success: false, code: 401,msg: 'Term not Saved'})
+					}
+					res.json({success: true, code:200, msg: 'New Term saved Successfully'});
+				});
+			}
+		});
+	}
+	else if(!token){
+		//Google Portion
+		var googleID = req.headers.googleID;
+		User.findOne({
+			googleID: googleID
 		}, function(err, user){
 			if(err){
 				throw err;
