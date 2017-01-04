@@ -68,6 +68,7 @@ public class GetUsernameTask extends AsyncTask<Void, Void, Void> {
         } catch (UserRecoverableAuthException userRecoverableException) {
             // GooglePlayServices.apk is either old, disabled, or not present
             // so we need to show the user some UI in the activity to recover.
+            Log.d(TAG, "Exception: "+userRecoverableException.getMessage());
             if(mActivity instanceof MainActivity){
                 ((MainActivity)mActivity).handleException(userRecoverableException);
             }
