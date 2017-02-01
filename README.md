@@ -1,5 +1,5 @@
 # Studious
-Studious is a course management application were students can take control of their classes manage assignments. This is an old app that I was working on. Demonstrates Communication between REST server and mobile applications. Currently Google and Email/Password authentication supported.
+Studious is a course management application were students can take control of their classes manage assignments. This is an old app that I was working on. Demonstrates Communication between REST server and mobile applications. Currently Google and Email/Password authentication supported. For a simple implementation of similar application visit [This repo](https://github.com/FMurry/Notify)
 ##Status
 Android - Authentication working
 iOS - Not Started
