@@ -51,7 +51,7 @@ Start your mongodb by running mongod in terminal
 
 Example .env file (Inside server folder)
 
-```javascript
+```
 APPNAME=Studious
 MONGOLAB_URI_DEV=mongodb://localhost/Studious
 NODE_ENV=dev
@@ -64,8 +64,8 @@ NODEMAILER_EMAIL="Your email here"
 NODEMAILER_PASS="Password to email here"
 STRIPE_SECRET_KEY=
 STRIPE_PUBLISH_KEY=
-GOOGLE_CLIENT_ID=511432630652-672pkpt2214lg39bd857v4sgkbu2a5m2.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=rEaWrF5kb-G2q-fNSw5405yc
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 GOOGLE_AUTH_URL=/auth/google
 GOOGLE_CALLBACK_URL=/auth/google/callback
 ```

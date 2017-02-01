@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 require('dotenv').config(); 
-var nodemailer = require('nodemailer');
 var gracefulShutdown;
 var dbURI = '';
 if (process.env.NODE_ENV === 'prod') {

@@ -260,7 +260,6 @@ apiRoutes.post('/addTerm', passport.authenticate(['jwt', 'google-token'], { sess
 					type: req.body.type,
 				});
 				user.terms.push(newTerm);
-				console.log("Password count: "+ user.password.length);
 				user.save(function(err) {
 					if(err){
 						console.log(err);

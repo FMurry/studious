@@ -248,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         SharedPreferences sharedPreferences = getSharedPreferences("token", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
-                        editor.putString(getString(R.string.saved_googleID), profile.getUser().getGoogleID());
+;                        editor.putString(getString(R.string.saved_googleID), profile.getUser().getGoogleID());
                         editor.putString(getString(R.string.saved_googleEmail), profile.getUser().getEmail());
                         editor.commit();
                         progressDialog.dismiss();
