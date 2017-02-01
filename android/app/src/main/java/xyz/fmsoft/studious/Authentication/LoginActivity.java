@@ -221,6 +221,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void googleLogin(String token) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         _error.setVisibility(View.GONE);
+        Log.d(TAG, "Google Token: "+token);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Please Wait.....");
         progressDialog.setCancelable(false);
